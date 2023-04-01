@@ -1,0 +1,17 @@
+{% if latest_question_list %}
+    <h1>Platzi Polls</h1>
+    <ul>
+        {% for question in latest_question_list %}
+            <li>
+                <h3>
+                    <a href="{% url 'Question_details' question.id %}">
+                        {{question}}
+                    </a>
+                </h3>                
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    <h1>Not polls available</h1>
+{% endif %}

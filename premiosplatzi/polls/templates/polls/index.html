@@ -4,7 +4,7 @@
         {% for question in latest_question_list %}
             <li>
                 <h3>
-                    <a href="{% url 'Question_details' question.id %}">
+                    <a href="{% url 'polls:details' question.id %}">
                         {{question}}
                     </a>
                 </h3>                

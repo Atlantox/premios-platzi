@@ -1,0 +1,14 @@
+<h1>You have successfully vote {{choice_text}} in {{question}}</h1>
+<p>
+    <h2>Total votes</h2>
+    <ul>
+        {% for choice in question.choice_set.all %}
+            <li>
+                {{choice.choice_text}}:{{choice.votes}} vote{{choice.votes|pluralize}}
+                
+            </li>
+        {% endfor %}
+    </ul>
+</p>
+
+<a href="{% url 'polls:details' question.id %}">¿quieres votar de nuevo?</a>

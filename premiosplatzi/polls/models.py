@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class Question(models.Model):
     question_text = models.CharField(max_length=100, verbose_name='The question')
-    pub_date = models.DateTimeField(auto_now=True)
+    pub_date = models.DateTimeField()
 
     def __str__(self):
         return self.question_text
@@ -15,7 +15,7 @@ class Question(models.Model):
         verbose_name_plural = 'Questions'
 
     def was_published_recently(self):
-        return self.pub_date > timezone.now() - datetime.timedelta(days=1)
+        return timezone.now() >= self.pub_date > timezone.now() - datetime.timedelta(days=1)
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, verbose_name='Target Question', on_delete=models.CASCADE)

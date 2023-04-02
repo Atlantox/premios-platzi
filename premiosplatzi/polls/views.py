@@ -1,24 +1,57 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.urls import reverse
+from django.views import generic
+from django.utils import timezone
 
 from . import models
 
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
 
-def index(request):
-    questions = models.Question.objects.all()
-
-    ctx = { 'latest_question_list':questions }
+    def get_queryset(self):
+        ''' Returns the last five questions ordered by publish date '''
+        return models.Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
     
-    return render(request, 'polls/index.html', ctx)
+class DetailView(generic.DetailView):
+    model = models.Question
+    template_name = 'polls/details.html'
 
+    def get_queryset(self):
+        ''' Only return the questions in the past '''
+        return models.Question.objects.filter(pub_date__lte=timezone.now())
 
-def details(request, question_id):
-    return HttpResponse(f'Estás viendo la question {question_id}')
+class ResultView(generic.DetailView):
+    model = models.Question
+    template_name = 'polls/results.html'
 
-
-def results(request, question_id):
-    return HttpResponse(f'Estás viendo los resultados a la pregunta {question_id}')
+    def get_queryset(self):
+        ''' Only return the questions in the past '''
+        return models.Question.objects.filter(pub_date__lte=timezone.now())
+    
 
 
 def vote(request, question_id):
-    return HttpResponse(f'Estás votando a la pregunta {question_id}')
+    question = get_object_or_404(models.Question, pk=question_id)
+    voted = False
+    
+    if question.pub_date > timezone.now():
+        return HttpResponseNotFound('Poll not found')
+    
+    if request.POST['choice']:
+        choices = question.choice_set.filter(pk=request.POST['choice'])
+        if len(choices) == 1:
+            choice = choices.first()
+            choice.votes += 1
+            choice.save()
+            voted = True
+
+    if voted:
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+    else:
+        return render(request, 'polls/details.html', {
+            'question':question,
+            'error_message': 'Has escogido una opción inválida'
+        })
+    

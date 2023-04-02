@@ -1,5 +1,16 @@
-{% if question %}
-<a href="{% url 'polls:home' %}">Back</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'polls/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'polls/detail.css' %}">
+    <title>{{question}} Details</title>
+</head>
+<body>
+    {% if question %}
 
     <form action="{% url 'polls:vote' question.id %}" method="POST">
         {% csrf_token %}
@@ -12,14 +23,20 @@
             {% endif %}
 
             {% for choice in question.choice_set.all  %}
-                <input type="radio" name="choice" id="choice-{{choice.id}}" value="{{choice.id}}">
-                <label for="choice-{{choice.id}}">{{choice.choice_text}}</label>
+                <div>
+                    <input type="radio" name="choice" id="choice-{{choice.id}}" value="{{choice.id}}">
+                    <label for="choice-{{choice.id}}">{{choice.choice_text}}</label>
+                </div>
+                
             {% endfor %}
 
         </fieldset>
         <button type="submit">Votar</button>
 
     </form>
-{% else %}
-    <h1>Poll not found</h1>
-{% endif %}
+    {% else %}
+        <h1>Poll not found</h1>
+    {% endif %}
+</body>
+</html>
+

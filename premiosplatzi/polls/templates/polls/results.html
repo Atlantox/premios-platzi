@@ -1,14 +1,28 @@
-<h1>You have successfully vote {{choice_text}} in {{question}}</h1>
-<p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'polls/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'polls/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'polls/results.css' %}">
+    <title>{{question}} Results</title>
+</head>
+<body>
+    <header>
+        <h1>You have successfully vote {{choice_text}} in {{question}}</h1>
+    </header>
     <h2>Total votes</h2>
     <ul>
         {% for choice in question.choice_set.all %}
             <li>
                 {{choice.choice_text}}:{{choice.votes}} vote{{choice.votes|pluralize}}
-                
             </li>
         {% endfor %}
     </ul>
-</p>
-
-<a href="{% url 'polls:details' question.id %}">¿quieres votar de nuevo?</a>
+    
+    <a href="{% url 'polls:details' question.id %}">¿quieres votar de nuevo?</a>
+</body>
+</html>
